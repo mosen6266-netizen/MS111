@@ -3,7 +3,7 @@ const CONFIG = {
   repo: 'MS111',
   branch: 'main',
   dataPath: 'data/bookmarks.json',
-  publicUrl: 'https://mosen6266-netizen.github.io/MS111/'
+  publicUrl: 'https://ms111-bookmarks.arcane-hare-0207.chatgpt.site/'
 };
 
 const state = {
