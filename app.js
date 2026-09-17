@@ -38,6 +38,7 @@ async function init() {
   setView(state.view);
   await loadData();
   if (state.token) await validateToken(state.token, true);
+  registerWebMcpTools();
 }
 
 function bindEvents() {
@@ -65,6 +66,51 @@ function bindEvents() {
     if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) { e.preventDefault(); el.search.focus(); }
     if (e.key.toLowerCase() === 'n' && state.isAdmin && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) openEdit();
     if (e.key === 'Escape') closePanel();
+  });
+}
+
+function registerWebMcpTools() {
+  const context = document.modelContext;
+  if (!context?.registerTool) return;
+  const register = tool => {
+    try { void Promise.resolve(context.registerTool(tool)).catch(() => {}); } catch (_) {}
+  };
+  register({
+    name: 'search_bookmarks',
+    title: '搜索网址收藏',
+    description: '按名称、网址、描述、分类或标签搜索公开收藏，并同步更新页面上的搜索结果。',
+    inputSchema: {
+      type: 'object',
+      properties: { query: { type: 'string', description: '要搜索的关键词；空字符串显示全部收藏。' } },
+      required: ['query'],
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint: false, untrustedContentHint: true },
+    execute(input) {
+      if (!input || typeof input.query !== 'string') throw new Error('query 必须是字符串');
+      state.query = input.query.trim().toLowerCase();
+      el.search.value = input.query.trim();
+      render();
+      return { query: input.query.trim(), resultCount: getVisibleBookmarks().length };
+    }
+  });
+  register({
+    name: 'list_bookmarks',
+    title: '读取网址收藏',
+    description: '读取当前公开网址收藏，可选按分类筛选；不会修改收藏内容。',
+    inputSchema: {
+      type: 'object',
+      properties: { category: { type: 'string', description: '可选的分类名称。' } },
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint: true, untrustedContentHint: true },
+    execute(input = {}) {
+      if (input.category !== undefined && typeof input.category !== 'string') throw new Error('category 必须是字符串');
+      const items = state.data.bookmarks
+        .filter(item => !input.category || (item.category || '未分类') === input.category)
+        .map(({ id, title, url, category, description, tags, pinned }) => ({ id, title, url, category, description, tags, pinned }));
+      return { count: items.length, bookmarks: items };
+    }
   });
 }
 
