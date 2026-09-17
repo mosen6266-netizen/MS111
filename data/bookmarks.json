@@ -1,12 +1,17 @@
 {
-  "version": 1,
-  "updatedAt": "2026-09-17T12:00:00.000Z",
+  "version": 2,
+  "updatedAt": "2026-09-17T13:42:29.000Z",
+  "taxonomy": {
+    "categories": ["常用", "工作", "学习", "工具", "影音", "美国", "德国"],
+    "tags": ["AI", "效率", "开发", "代码", "视频", "学习", "搜索", "邮箱", "美国", "德国"]
+  },
   "bookmarks": [
     {
       "id": "welcome-chatgpt",
       "title": "ChatGPT",
       "url": "https://chatgpt.com/",
       "category": "常用",
+      "country": "global",
       "description": "对话、创作、分析与日常工作助手。",
       "tags": ["AI", "效率"],
       "pinned": true,
@@ -19,6 +24,7 @@
       "title": "GitHub",
       "url": "https://github.com/",
       "category": "工作",
+      "country": "global",
       "description": "代码托管、项目协作与开源社区。",
       "tags": ["开发", "代码"],
       "pinned": false,
@@ -31,6 +37,7 @@
       "title": "YouTube",
       "url": "https://www.youtube.com/",
       "category": "影音",
+      "country": "global",
       "description": "视频、音乐、教程与创作者内容。",
       "tags": ["视频", "学习"],
       "pinned": false,
@@ -43,6 +50,7 @@
       "title": "Google",
       "url": "https://www.google.com/",
       "category": "常用",
+      "country": "global",
       "description": "快速查找网页、图片、新闻与更多信息。",
       "tags": ["搜索"],
       "pinned": false,
