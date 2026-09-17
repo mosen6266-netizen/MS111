@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="一个简洁、同步、可分享的网址收藏空间。">
   <meta name="theme-color" content="#f4f0e8">
-  <title>我的网址收藏</title>
+  <title>墨森网站收藏</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23171914'/%3E%3Cpath d='M18 46V18h8l6 12 6-12h8v28h-7V29l-7 13-7-13v17z' fill='%23bddb51'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://www.google.com">
   <link rel="stylesheet" href="styles.css">
@@ -16,7 +16,7 @@
     <a class="brand" href="#" aria-label="返回全部收藏">
       <span class="brand-mark">M</span>
       <span>
-        <strong>网址收藏</strong>
+        <strong>墨森网站收藏</strong>
         <small>MY LINK ARCHIVE</small>
       </span>
     </a>
@@ -63,23 +63,59 @@
       </div>
     </section>
 
-    <nav class="category-nav" id="categoryNav" aria-label="网址分类"></nav>
+    <div class="collection-tabs">
+      <button class="collection-tab active" id="bookmarkTabBtn">网址收藏</button>
+      <button class="collection-tab admin-only" id="vaultTabBtn">🔒 私密文本</button>
+    </div>
 
-    <section class="content-head">
-      <div>
-        <span class="section-label">COLLECTION</span>
-        <h2 id="sectionTitle">全部收藏</h2>
+    <div class="filter-row" id="bookmarkFilters">
+      <nav class="category-nav" id="categoryNav" aria-label="网址分类"></nav>
+      <nav class="country-nav" id="countryNav" aria-label="地区筛选"></nav>
+    </div>
+
+    <section id="bookmarkSection">
+      <div class="content-head">
+        <div>
+          <span class="section-label">COLLECTION</span>
+          <h2 id="sectionTitle">全部收藏</h2>
+        </div>
+        <button class="btn btn-accent admin-only" id="addBtn">＋ 添加网址</button>
       </div>
-      <button class="btn btn-accent admin-only" id="addBtn">＋ 添加网址</button>
+
+      <section class="bookmark-grid" id="bookmarkGrid" aria-live="polite"></section>
+
+      <section class="empty-state" id="emptyState" hidden>
+        <div class="empty-symbol">↗</div>
+        <h3>这里还没有网址</h3>
+        <p id="emptyCopy">换个关键词或分类试试。</p>
+        <button class="btn btn-dark admin-only" id="emptyAddBtn">添加第一个网址</button>
+      </section>
     </section>
 
-    <section class="bookmark-grid" id="bookmarkGrid" aria-live="polite"></section>
-
-    <section class="empty-state" id="emptyState" hidden>
-      <div class="empty-symbol">↗</div>
-      <h3>这里还没有网址</h3>
-      <p id="emptyCopy">换个关键词或分类试试。</p>
-      <button class="btn btn-dark admin-only" id="emptyAddBtn">添加第一个网址</button>
+    <section id="vaultSection" hidden>
+      <div class="content-head">
+        <div>
+          <span class="section-label">ENCRYPTED TEXT VAULT</span>
+          <h2>私密文本收藏</h2>
+        </div>
+        <div class="vault-head-actions">
+          <button class="btn btn-ghost" id="lockVaultBtn" hidden>锁定</button>
+          <button class="btn btn-accent" id="addNoteBtn" hidden>＋ 添加文本</button>
+        </div>
+      </div>
+      <div class="vault-gate" id="vaultGate">
+        <div class="vault-lock">⌾</div>
+        <h3>私密文本已加密</h3>
+        <p>账号、密码、邮箱和文本会先在你的浏览器中加密，再同步保存。主密码不会上传。</p>
+        <button class="btn btn-dark" id="unlockVaultBtn">解锁私密文本</button>
+      </div>
+      <div class="vault-grid" id="vaultGrid" hidden></div>
+      <section class="empty-state" id="vaultEmpty" hidden>
+        <div class="empty-symbol">✦</div>
+        <h3>还没有私密文本</h3>
+        <p>可以收藏账号、密码、邮箱、代码片段或其他文本。</p>
+        <button class="btn btn-dark" id="vaultEmptyAddBtn">添加第一条文本</button>
+      </section>
     </section>
   </main>
 
@@ -129,6 +165,13 @@
           <input id="categoryInput" type="text" list="categoryOptions" placeholder="例如：常用" maxlength="30">
           <datalist id="categoryOptions"></datalist>
         </label>
+        <label>地区
+          <select id="countryInput">
+            <option value="global">🌐 全球/其他</option>
+            <option value="us">🇺🇸 美国</option>
+            <option value="de">🇩🇪 德国</option>
+          </select>
+        </label>
         <label class="span-2">简短描述
           <textarea id="descriptionInput" rows="3" placeholder="这个网站是做什么的？" maxlength="240"></textarea>
         </label>
@@ -144,12 +187,83 @@
     </form>
   </dialog>
 
+  <dialog id="taxonomyDialog" class="dialog">
+    <div class="dialog-card">
+      <button type="button" class="dialog-close" data-close="taxonomyDialog" aria-label="关闭">×</button>
+      <span class="dialog-kicker">ORGANIZE</span>
+      <h2>管理分类与标签</h2>
+      <p>新增、改名或删除分类和标签。改名会同步更新已有网址。</p>
+      <div class="taxonomy-columns">
+        <section>
+          <h3>分类</h3>
+          <div class="quick-add"><input id="newCategoryInput" type="text" placeholder="新分类名称"><button class="btn btn-dark" id="addCategoryBtn">添加</button></div>
+          <div class="taxonomy-list" id="categoryManagerList"></div>
+        </section>
+        <section>
+          <h3>标签</h3>
+          <div class="quick-add"><input id="newTagInput" type="text" placeholder="新标签名称"><button class="btn btn-dark" id="addTagBtn">添加</button></div>
+          <div class="taxonomy-list" id="tagManagerList"></div>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="vaultDialog" class="dialog dialog-small">
+    <form class="dialog-card" id="vaultForm">
+      <button type="button" class="dialog-close" data-close="vaultDialog" aria-label="关闭">×</button>
+      <span class="dialog-kicker">PRIVATE VAULT</span>
+      <h2 id="vaultDialogTitle">解锁私密文本</h2>
+      <p id="vaultDialogCopy">输入主密码以解密私密文本。主密码只保留在当前页面内。</p>
+      <label>主密码
+        <input id="vaultPasswordInput" type="password" minlength="8" autocomplete="off" required>
+      </label>
+      <label id="vaultConfirmLabel">再次输入主密码
+        <input id="vaultPasswordConfirm" type="password" minlength="8" autocomplete="off">
+      </label>
+      <p class="security-note">请牢记主密码：忘记后无法恢复加密内容。不要使用你的 GitHub 密码。</p>
+      <div class="dialog-actions right">
+        <button type="button" class="btn btn-ghost" data-close="vaultDialog">取消</button>
+        <button type="submit" class="btn btn-dark" id="unlockSubmitBtn">解锁</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="noteDialog" class="dialog">
+    <form class="dialog-card" id="noteForm">
+      <button type="button" class="dialog-close" data-close="noteDialog" aria-label="关闭">×</button>
+      <span class="dialog-kicker">PRIVATE TEXT</span>
+      <h2 id="noteDialogTitle">添加私密文本</h2>
+      <input type="hidden" id="noteId">
+      <div class="form-grid">
+        <label>名称 <span>*</span><input id="noteTitleInput" type="text" placeholder="例如：工作邮箱" maxlength="80" required></label>
+        <label>类型
+          <select id="noteTypeInput">
+            <option value="账号">账号</option><option value="密码">密码</option><option value="邮箱">邮箱</option><option value="文本">文本</option><option value="其他">其他</option>
+          </select>
+        </label>
+        <label class="span-2">内容 <span>*</span><textarea id="noteValueInput" rows="4" placeholder="输入需要收藏和复制的内容" required></textarea></label>
+        <label>分类 <input id="noteCategoryInput" type="text" list="categoryOptions" placeholder="例如：工作"></label>
+        <label>地区
+          <select id="noteCountryInput"><option value="global">🌐 全球/其他</option><option value="us">🇺🇸 美国</option><option value="de">🇩🇪 德国</option></select>
+        </label>
+        <label class="span-2">标签 <input id="noteTagsInput" type="text" placeholder="邮箱, 工作, 德国（用逗号分隔）"></label>
+        <label class="span-2">备注 <textarea id="noteRemarkInput" rows="2" placeholder="可选备注"></textarea></label>
+      </div>
+      <div class="dialog-actions right"><button type="button" class="btn btn-ghost" data-close="noteDialog">取消</button><button type="submit" class="btn btn-dark" id="saveNoteBtn">加密保存</button></div>
+    </form>
+  </dialog>
+
   <aside class="admin-panel" id="adminPanel" aria-hidden="true">
     <div class="admin-head">
       <div><span class="dialog-kicker">ADMIN PANEL</span><h2>管理工具</h2></div>
       <button class="dialog-close" id="closePanelBtn" aria-label="关闭">×</button>
     </div>
     <div class="admin-user"><span class="status-dot"></span><div><strong id="adminUser">已验证</strong><small>拥有编辑权限</small></div></div>
+    <div class="panel-section">
+      <h3>内容管理</h3>
+      <button class="panel-action" id="manageTaxonomyBtn"><span>⌘</span><div><b>管理分类与标签</b><small>新增、改名或删除</small></div></button>
+      <button class="panel-action" id="openVaultBtn"><span>⌾</span><div><b>私密文本收藏</b><small>加密保存账号、密码和文本</small></div></button>
+    </div>
     <div class="panel-section">
       <h3>批量管理</h3>
       <button class="panel-action" id="importBtn"><span>⇧</span><div><b>导入收藏</b><small>支持 JSON 或浏览器 HTML</small></div></button>
