@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="一个简洁、同步、可分享的网址收藏空间。">
+  <meta name="theme-color" content="#f4f0e8">
+  <title>我的网址收藏</title>
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="返回全部收藏">
+      <span class="brand-mark">M</span>
+      <span>
+        <strong>网址收藏</strong>
+        <small>MY LINK ARCHIVE</small>
+      </span>
+    </a>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="切换深浅色" title="切换深浅色">
+        <span class="theme-icon">◐</span>
+      </button>
+      <button class="btn btn-ghost" id="shareBtn">分享收藏</button>
+      <button class="btn btn-dark" id="adminBtn">管理收藏</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span></span> CURATED WEB DIRECTORY</div>
+      <div class="hero-row">
+        <div>
+          <h1>把好网站，<br><em>留在这里。</em></h1>
+          <p class="hero-copy">集中整理常用工具、灵感与知识。无需登录即可浏览，每次打开都是最新收藏。</p>
+        </div>
+        <div class="hero-stats" aria-label="收藏统计">
+          <div><strong id="totalCount">0</strong><span>个网址</span></div>
+          <div><strong id="categoryCount">0</strong><span>个分类</span></div>
+          <div><strong id="updatedText">—</strong><span>最近更新</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="筛选工具">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+        <input id="searchInput" type="search" placeholder="搜索名称、网址、描述或标签…" autocomplete="off">
+        <kbd>/</kbd>
+      </label>
+      <div class="view-actions">
+        <select id="sortSelect" aria-label="排序方式">
+          <option value="custom">自定义排序</option>
+          <option value="newest">最近添加</option>
+          <option value="az">名称 A–Z</option>
+          <option value="popular">本机常用</option>
+        </select>
+        <button class="icon-btn active" id="gridViewBtn" title="卡片视图" aria-label="卡片视图">▦</button>
+        <button class="icon-btn" id="listViewBtn" title="列表视图" aria-label="列表视图">☷</button>
+      </div>
+    </section>
+
+    <nav class="category-nav" id="categoryNav" aria-label="网址分类"></nav>
+
+    <section class="content-head">
+      <div>
+        <span class="section-label">COLLECTION</span>
+        <h2 id="sectionTitle">全部收藏</h2>
+      </div>
+      <button class="btn btn-accent admin-only" id="addBtn">＋ 添加网址</button>
+    </section>
+
+    <section class="bookmark-grid" id="bookmarkGrid" aria-live="polite"></section>
+
+    <section class="empty-state" id="emptyState" hidden>
+      <div class="empty-symbol">↗</div>
+      <h3>这里还没有网址</h3>
+      <p id="emptyCopy">换个关键词或分类试试。</p>
+      <button class="btn btn-dark admin-only" id="emptyAddBtn">添加第一个网址</button>
+    </section>
+  </main>
+
+  <footer>
+    <span>MY LINK ARCHIVE</span>
+    <p>一个公开可浏览、仅所有者可编辑的网址空间。</p>
+    <span id="syncStatus">正在读取最新收藏…</span>
+  </footer>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <dialog id="loginDialog" class="dialog dialog-small">
+    <form method="dialog" class="dialog-card" id="loginForm">
+      <button class="dialog-close" value="cancel" aria-label="关闭">×</button>
+      <span class="dialog-kicker">OWNER ACCESS</span>
+      <h2>进入管理模式</h2>
+      <p>请使用 GitHub 精细访问令牌验证所有者身份。令牌仅保存在你的浏览器中，不会公开或写入仓库。</p>
+      <label>GitHub Token
+        <input id="tokenInput" type="password" placeholder="github_pat_…" autocomplete="off" required>
+      </label>
+      <label class="check-row"><input id="rememberToken" type="checkbox"> 在这台设备上保持登录</label>
+      <div class="dialog-actions">
+        <a class="text-link" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">创建令牌 ↗</a>
+        <button class="btn btn-dark" id="verifyBtn" value="default">验证并进入</button>
+      </div>
+      <details>
+        <summary>令牌应该如何设置？</summary>
+        <p>Repository access 选择 <b>Only select repositories → MS111</b>；Permissions 中将 <b>Contents</b> 设为 <b>Read and write</b>。无需勾选其他权限。</p>
+      </details>
+    </form>
+  </dialog>
+
+  <dialog id="editDialog" class="dialog">
+    <form class="dialog-card" id="editForm">
+      <button type="button" class="dialog-close" data-close="editDialog" aria-label="关闭">×</button>
+      <span class="dialog-kicker" id="editKicker">NEW BOOKMARK</span>
+      <h2 id="editTitle">添加网址</h2>
+      <input type="hidden" id="bookmarkId">
+      <div class="form-grid">
+        <label class="span-2">网址 <span>*</span>
+          <input id="urlInput" type="url" placeholder="https://example.com" required>
+        </label>
+        <label>名称 <span>*</span>
+          <input id="titleInput" type="text" placeholder="网站名称" maxlength="80" required>
+        </label>
+        <label>分类
+          <input id="categoryInput" type="text" list="categoryOptions" placeholder="例如：常用" maxlength="30">
+          <datalist id="categoryOptions"></datalist>
+        </label>
+        <label class="span-2">简短描述
+          <textarea id="descriptionInput" rows="3" placeholder="这个网站是做什么的？" maxlength="240"></textarea>
+        </label>
+        <label class="span-2">标签
+          <input id="tagsInput" type="text" placeholder="工具, 设计, 效率（用逗号分隔）">
+        </label>
+      </div>
+      <label class="check-row"><input id="pinnedInput" type="checkbox"> 置顶显示</label>
+      <div class="dialog-actions right">
+        <button type="button" class="btn btn-ghost" data-close="editDialog">取消</button>
+        <button type="submit" class="btn btn-dark" id="saveBtn">保存网址</button>
+      </div>
+    </form>
+  </dialog>
+
+  <aside class="admin-panel" id="adminPanel" aria-hidden="true">
+    <div class="admin-head">
+      <div><span class="dialog-kicker">ADMIN PANEL</span><h2>管理工具</h2></div>
+      <button class="dialog-close" id="closePanelBtn" aria-label="关闭">×</button>
+    </div>
+    <div class="admin-user"><span class="status-dot"></span><div><strong id="adminUser">已验证</strong><small>拥有编辑权限</small></div></div>
+    <div class="panel-section">
+      <h3>批量管理</h3>
+      <button class="panel-action" id="importBtn"><span>⇧</span><div><b>导入收藏</b><small>支持 JSON 或浏览器 HTML</small></div></button>
+      <input id="importFile" type="file" accept=".json,.html,.htm" hidden>
+      <button class="panel-action" id="exportBtn"><span>⇩</span><div><b>导出备份</b><small>下载完整 JSON 数据</small></div></button>
+    </div>
+    <div class="panel-section">
+      <h3>显示与同步</h3>
+      <button class="panel-action" id="refreshBtn"><span>↻</span><div><b>重新同步</b><small>读取仓库中的最新数据</small></div></button>
+      <button class="panel-action" id="copyPublicBtn"><span>⧉</span><div><b>复制公开链接</b><small>任何人可打开，只能查看</small></div></button>
+    </div>
+    <div class="panel-bottom"><button class="btn btn-danger" id="logoutBtn">退出管理模式</button></div>
+  </aside>
+  <div class="panel-backdrop" id="panelBackdrop" hidden></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
