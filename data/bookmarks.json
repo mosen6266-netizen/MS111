@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-17T12:00:00.000Z",
+  "bookmarks": [
+    {
+      "id": "welcome-chatgpt",
+      "title": "ChatGPT",
+      "url": "https://chatgpt.com/",
+      "category": "常用",
+      "description": "对话、创作、分析与日常工作助手。",
+      "tags": ["AI", "效率"],
+      "pinned": true,
+      "order": 0,
+      "createdAt": "2026-09-17T12:00:00.000Z",
+      "updatedAt": "2026-09-17T12:00:00.000Z"
+    },
+    {
+      "id": "welcome-github",
+      "title": "GitHub",
+      "url": "https://github.com/",
+      "category": "工作",
+      "description": "代码托管、项目协作与开源社区。",
+      "tags": ["开发", "代码"],
+      "pinned": false,
+      "order": 1,
+      "createdAt": "2026-09-17T12:00:00.000Z",
+      "updatedAt": "2026-09-17T12:00:00.000Z"
+    },
+    {
+      "id": "welcome-youtube",
+      "title": "YouTube",
+      "url": "https://www.youtube.com/",
+      "category": "影音",
+      "description": "视频、音乐、教程与创作者内容。",
+      "tags": ["视频", "学习"],
+      "pinned": false,
+      "order": 2,
+      "createdAt": "2026-09-17T12:00:00.000Z",
+      "updatedAt": "2026-09-17T12:00:00.000Z"
+    },
+    {
+      "id": "welcome-google",
+      "title": "Google",
+      "url": "https://www.google.com/",
+      "category": "常用",
+      "description": "快速查找网页、图片、新闻与更多信息。",
+      "tags": ["搜索"],
+      "pinned": false,
+      "order": 3,
+      "createdAt": "2026-09-17T12:00:00.000Z",
+      "updatedAt": "2026-09-17T12:00:00.000Z"
+    }
+  ]
+}
