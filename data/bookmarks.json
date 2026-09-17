@@ -1,14 +1,15 @@
 {
   "version": 2,
-  "updatedAt": "2026-09-17T13:48:25.360Z",
+  "updatedAt": "2026-09-17T13:48:28.629Z",
   "taxonomy": {
     "categories": [
-      "工作",
       "学习",
       "工具",
       "影音",
       "美国",
-      "德国"
+      "德国",
+      "常用",
+      "未分类"
     ],
     "tags": [
       "AI",
@@ -44,7 +45,7 @@
       "id": "welcome-github",
       "title": "GitHub",
       "url": "https://github.com/",
-      "category": "工作",
+      "category": "未分类",
       "country": "global",
       "description": "代码托管、项目协作与开源社区。",
       "tags": [
